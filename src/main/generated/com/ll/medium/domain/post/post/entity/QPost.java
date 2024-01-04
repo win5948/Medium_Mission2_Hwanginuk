@@ -34,6 +34,8 @@ public class QPost extends EntityPathBase<Post> {
     //inherited
     public final NumberPath<Long> id = _super.id;
 
+    public final BooleanPath isPaid = createBoolean("isPaid");
+
     //inherited
     public final DateTimePath<java.time.LocalDateTime> modifyDate = _super.modifyDate;
 

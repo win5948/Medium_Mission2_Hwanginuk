@@ -2,6 +2,7 @@ package com.ll.medium.domain.post.post.controller;
 
 import com.ll.medium.domain.post.post.entity.Post;
 import com.ll.medium.domain.post.post.service.PostService;
+import com.ll.medium.exception.NotFoundException;
 import com.ll.medium.global.rq.Rq.Rq;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,12 +30,24 @@ public class PostController {
     private final Rq rq;
 
     @GetMapping("/{id}")
-    @Operation(summary = "글 상세")
-    public String showDetail(@PathVariable long id) {
-        rq.setAttribute("post", postService.findById(id).get());
+    public String showDetail(@PathVariable long id, Model model) {
+        Post post = postService.findById(id)
+                .orElseThrow(() -> new NotFoundException("해당 글을 찾을 수 없습니다."));
 
+        // 유료 글 확인 및 처리 로직 추가
+        if (post.isPaid()) {
+            // 현재 사용자의 유료 멤버십 상태 확인 필요
+            // 예: if (!currentUser.isPaidMember()) {
+            //         post.setContent("이 글은 유료멤버십전용 입니다.");
+            //     }
+        }
+
+        model.addAttribute("post", post);
         return "domain/post/post/detail";
     }
+
+
+
 
     @GetMapping("/list")
     @Operation(summary = "글 목록")

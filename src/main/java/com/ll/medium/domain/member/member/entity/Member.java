@@ -33,6 +33,8 @@ public class Member {
     private LocalDateTime modifyDate;
     private String username;
     private String password;
+    private boolean isPaid;
+
     @Column(unique = true)
     private String refreshToken;
 
@@ -47,13 +49,15 @@ public class Member {
     @Transient
     public List<String> getAuthoritiesAsStringList() {
         List<String> authorities = new ArrayList<>();
-
         authorities.add("ROLE_MEMBER");
 
         if (List.of("system", "admin").contains(username)) {
             authorities.add("ROLE_ADMIN");
         }
 
+        if (isPaid) {
+            authorities.add("ROLE_PAID");
+        }
         return authorities;
     }
 }
